@@ -7,17 +7,20 @@ public class SurfaceRenderer {
         System.loadLibrary("surface_renderer");
     }
 
+    private final int mDegree;
+
     private long mNativePtr;
 
     private final int mWidth;
     private final int mHeight;
     private final int mFormat;
 
-    public SurfaceRenderer(int width, int height, int fmt) throws Exception {
-        mNativePtr = nativeCreate(width, height, fmt);
+    public SurfaceRenderer(int width, int height, int fmt, int degree) throws Exception {
+        mNativePtr = nativeCreate(width, height, fmt, degree);
         this.mWidth = width;
         this.mHeight = height;
         this.mFormat = fmt;
+        this.mDegree = degree;
     }
 
     public int getWidth() {
@@ -33,7 +36,7 @@ public class SurfaceRenderer {
     }
 
 
-    private native long nativeCreate(int width, int height, int fmt);
+    private native long nativeCreate(int width, int height, int fmt, int degree);
 
     private native int nativeSetSurface(long ptr, Surface surface);
 

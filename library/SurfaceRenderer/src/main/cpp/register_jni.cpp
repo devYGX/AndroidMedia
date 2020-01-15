@@ -8,12 +8,12 @@
 #define CLASS_NAME  "org/renderer/SurfaceRenderer"
 
 static jlong
-nativeCreate(JNIEnv *env, jobject obj, jint width, jint height, jint fmt) {
+nativeCreate(JNIEnv *env, jobject obj, jint width, jint height, jint fmt, jint degree) {
     if (!support_fmt(fmt)) {
         THROW_RUNTIME_EXCEPTION(env, "unsupport format");
     }
 
-    SurfaceRenderer *renderer = new SurfaceRenderer(width, height, fmt);
+    SurfaceRenderer *renderer = new SurfaceRenderer(width, height, fmt, degree);
     return reinterpret_cast<jlong>(renderer);
 }
 
@@ -58,7 +58,7 @@ static jint nativeSetSurface(JNIEnv *env, jobject obj, jlong ptr, jobject surfac
 }
 
 static JNINativeMethod methods[] = {
-        {"nativeCreate",       "(III)J",                     (void *) nativeCreate},
+        {"nativeCreate",       "(IIII)J",                    (void *) nativeCreate},
         {"nativeRelease",      "(J)V",                       (void *) nativeRelease},
         {"nativeSetSurface",   "(JLandroid/view/Surface;)I", (void *) nativeSetSurface},
         {"nativeRefreshFrame", "(J[B)I",                     (void *) nativeRefreshFrame}

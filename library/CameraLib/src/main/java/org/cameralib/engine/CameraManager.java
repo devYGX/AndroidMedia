@@ -506,7 +506,7 @@ public final class CameraManager implements CameraDisplayHandler.Observer,
                 for (Map.Entry<PreviewCallback, Boolean> entry : set) {
                     Boolean value = entry.getValue();
                     if (value != null && value) {
-                        entry.getKey().onPreviewData(data, getPreviewParameter());
+                       entry.getKey().onPreviewData(data, getPreviewParameter());
                     }
                 }
             }

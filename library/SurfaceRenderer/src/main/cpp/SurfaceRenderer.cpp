@@ -4,10 +4,11 @@
 #include <stdlib.h>
 #include <memory.h>
 
-SurfaceRenderer::SurfaceRenderer(int width, int height, int fmt) :
+SurfaceRenderer::SurfaceRenderer(int width, int height, int fmt, int degree) :
         width(width),
         height(height),
         fmt(fmt),
+        degree(degree),
         window(NULL) {
     pthread_mutex_init(&lock, NULL);
     rgbx = (unsigned char *) malloc(sizeof(unsigned char) * width * height * PREVIEW_PIXEL_BYTES);
@@ -29,8 +30,8 @@ int SurfaceRenderer::setSurface(ANativeWindow *surface_window) {
     }
     window = surface_window;
     // 1表示MJPEG, 对应的是RGBX的色彩模式, 一个像素需要4个字节来表示;
+
     ANativeWindow_setBuffersGeometry(surface_window, width, height, 1);
-    LOGD("release");
     pthread_mutex_unlock(&lock);
 
     return 0;

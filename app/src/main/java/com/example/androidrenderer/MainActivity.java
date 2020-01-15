@@ -4,15 +4,14 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.TextureView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.cameralib.engine.CameraManager;
 import org.cameralib.engine.ActionCallback;
 import org.cameralib.engine.ActionCarrier;
 import org.cameralib.engine.CameraDisplayHandler;
+import org.cameralib.engine.CameraManager;
 import org.cameralib.engine.PreviewCallback;
 import org.cameralib.engine.PreviewParameter;
 import org.renderer.FrameRendererView;
@@ -66,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                     Camera.Size previewSize = previewParameter.getPreviewSize();
                     for (FrameRendererView rendererView : rendererViews) {
                         try {
-                            rendererView.setup(ImageFormat.NV21, previewSize.width, previewSize.height);
-                            rendererView.updateMatrix(-previewParameter.getDegree(), false, FrameRendererView.SCALE_TYPE_CENTER_CROP);
+                            rendererView.setup(ImageFormat.NV21, previewSize.width, previewSize.height, previewParameter.getDegree());
+                            rendererView.updateMatrix(-previewParameter.getDegree(), true, FrameRendererView.SCALE_TYPE_CENTER_CROP);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -94,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     }
 
+
     @Override
     public void onPreviewData(final byte[] buf, PreviewParameter paramter) {
 
@@ -101,7 +101,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             threadPool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    rendererView.refreshFrame(buf);
+                    long start = System.currentTimeMillis();
+                    int i = rendererView.refreshFrame(buf);
                 }
             });
         }

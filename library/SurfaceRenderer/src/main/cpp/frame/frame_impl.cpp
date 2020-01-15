@@ -1,35 +1,39 @@
+#include <string.h>
 #include "../base_frame.h"
 #include "../base.h"
 
-static unsigned char sat(int value){
+static unsigned char sat(int value) {
     return (unsigned int) value < 0 ? 0 : (value > 0xFF ? 0xFF : value);
 }
 
-bool support_fmt(int fmt){
-    switch (fmt){
+bool support_fmt(int fmt) {
+    switch (fmt) {
         case FMT_NV21:
+        case FMT_RGBA:
             return true;
     }
     return false;
 }
 
-float get_unit_pixel(int fmt){
-    switch (fmt){
+float get_unit_pixel(int fmt) {
+    switch (fmt) {
         case FMT_NV21:
             return 1.5F;
     }
     return 0;
 }
 
-bool buffer_size_right(int width, int height, int fmt, int size){
-    switch (fmt){
+bool buffer_size_right(int width, int height, int fmt, int size) {
+    switch (fmt) {
         case FMT_NV21:
             return width * height * 3 / 2 == size;
+        case FMT_RGBA:
+            return width * height * 4 == size;
     }
     return false;
 }
 
-static int nv21_2_rgbx(int w, int h, unsigned char *nv21, unsigned char *rgbx){
+static int nv21_2_rgbx(int w, int h, unsigned char *nv21, unsigned char *rgbx) {
     /*
      NV21: w: 4, h:4; bytes_data: 4 * 4 * 3 / 2 = 24
      Y00 Y01 Y10  Y11 公用U00 V00分量
@@ -51,9 +55,9 @@ static int nv21_2_rgbx(int w, int h, unsigned char *nv21, unsigned char *rgbx){
     int y11;
     int u;
     int v;
-    for(; i < h; i += 2){
+    for (; i < h; i += 2) {
         j = 0;
-        for(; j < w; j += 2){
+        for (; j < w; j += 2) {
             y00 = nv21[i * w + j];
             y01 = nv21[i * w + j + 1];
 
@@ -66,7 +70,7 @@ static int nv21_2_rgbx(int w, int h, unsigned char *nv21, unsigned char *rgbx){
             int r = 0;
             int g = 0;
             int b = 0;
-            if(v != 0 || u != 0){
+            if (v != 0 || u != 0) {
 
                 /*
                 // 支持
@@ -111,10 +115,13 @@ static int nv21_2_rgbx(int w, int h, unsigned char *nv21, unsigned char *rgbx){
     return 0;
 }
 
-int anytorgbx(int fmt, int w, int h, unsigned char *src, unsigned char *rgbx){
-    switch (fmt){
+int anytorgbx(int fmt, int w, int h, unsigned char *src, unsigned char *rgbx) {
+    switch (fmt) {
         case FMT_NV21:
-            return nv21_2_rgbx(w,h,src,rgbx);
+            return nv21_2_rgbx(w, h, src, rgbx);
+        case FMT_RGBA:
+            memcpy(rgbx, src, w * h * PREVIEW_PIXEL_BYTES);
+            return 0;
         default:
             return UNSUPPORT_FMT;
     }

@@ -93,7 +93,7 @@ public class FrameRendererView extends TextureView {
         super.setSurfaceTextureListener(surfaceTextureListener);
     }
 
-    public synchronized final void setup(int frameFormat, int frameWidth, int frameHeight)
+    public synchronized final void setup(int frameFormat, int frameWidth, int frameHeight, int degree)
             throws Exception {
         if (renderer != null) {
             if (renderer.getFormat() == frameFormat
@@ -108,7 +108,7 @@ public class FrameRendererView extends TextureView {
         if (renderer != null) {
             renderer.release();
         }
-        renderer = new SurfaceRenderer(frameWidth, frameHeight, frameFormat);
+        renderer = new SurfaceRenderer(frameWidth, frameHeight, frameFormat, degree);
         mFrameFormat = frameFormat;
         mFrameWidth = frameWidth;
         mFrameHeight = frameHeight;
