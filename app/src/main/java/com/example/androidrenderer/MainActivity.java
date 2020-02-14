@@ -4,7 +4,6 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.TextureView;
 
 import androidx.appcompat.app.AppCompatActivity;
