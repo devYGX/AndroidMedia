@@ -15,6 +15,7 @@ import org.cameralib.engine.CameraManager;
 import org.cameralib.engine.PreviewCallback;
 import org.cameralib.engine.PreviewParameter;
 import org.renderer.FrameRendererView;
+import org.renderer.SurfaceRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                     Camera.Size previewSize = previewParameter.getPreviewSize();
                     for (FrameRendererView rendererView : rendererViews) {
                         try {
-                            rendererView.setup(ImageFormat.NV21, previewSize.width, previewSize.height, previewParameter.getDegree());
+                            rendererView.setup(SurfaceRenderer.FMT_NV21, previewSize.width, previewSize.height, previewParameter.getDegree());
                             rendererView.updateMatrix(true, FrameRendererView.SCALE_TYPE_CENTER_CROP);
                         } catch (Exception e) {
                             e.printStackTrace();

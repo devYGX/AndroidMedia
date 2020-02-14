@@ -3,9 +3,14 @@ package org.renderer;
 import android.view.Surface;
 
 public class SurfaceRenderer {
+
     static {
         System.loadLibrary("surface_renderer");
     }
+
+    public static final int FMT_NV21 = 0;
+    public static final int FMT_I420 = 1;
+
 
     private final int mDegree;
 
@@ -48,6 +53,11 @@ public class SurfaceRenderer {
         return nativeSetSurface(mNativePtr, surface);
     }
 
+    /**
+     * 刷新数据
+     * @param buffer yuv frame
+     * @return 0 is success; otherwise refresh error;see {@link RendererCode}
+     */
     public int refreshFrame(byte[] buffer) {
         return nativeRefreshFrame(mNativePtr, buffer);
     }

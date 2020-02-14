@@ -1,5 +1,5 @@
 
-#define FMT_NV21 17
+#define FMT_NV21 0
 #define FMT_I420 1
 
 #define PREVIEW_PIXEL_BYTES 4	// RGBA/RGBX

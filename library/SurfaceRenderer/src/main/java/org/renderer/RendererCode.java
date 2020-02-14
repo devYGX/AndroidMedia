@@ -2,6 +2,9 @@ package org.renderer;
 
 public interface RendererCode {
 
+    /** success */
+    int SUCCESS             = 0;
+
     /** 不支持的渲染格式 */
     int UNSUPPORT_FMT       = -1;
 
