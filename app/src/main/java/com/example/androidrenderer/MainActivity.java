@@ -4,6 +4,7 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.TextureView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                     for (FrameRendererView rendererView : rendererViews) {
                         try {
                             rendererView.setup(ImageFormat.NV21, previewSize.width, previewSize.height, previewParameter.getDegree());
-                            rendererView.updateMatrix(-previewParameter.getDegree(), true, FrameRendererView.SCALE_TYPE_CENTER_CROP);
+                            rendererView.updateMatrix(true, FrameRendererView.SCALE_TYPE_CENTER_CROP);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -93,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     }
 
-
     @Override
     public void onPreviewData(final byte[] buf, PreviewParameter paramter) {
 
@@ -102,7 +102,9 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
+
                     int i = rendererView.refreshFrame(buf);
+
                 }
             });
         }
