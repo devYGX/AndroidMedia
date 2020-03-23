@@ -119,7 +119,7 @@ int SurfaceRenderer::refreshFrame(unsigned char *frame, size_t size) {
 
     memset(rgbx, 0, width * height * PREVIEW_PIXEL_BYTES);
     ret = anytorgba(fmt, width, height, degree, frame, rgbx);
-    LOGE("after anytorgba: %d", ret);
+    // LOGE("after anytorgba: %d", ret);
 
     if (ret) {
         goto __FINALLY;
