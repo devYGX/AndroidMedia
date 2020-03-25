@@ -1,6 +1,5 @@
 package com.example.androidrenderer;
 
-import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -14,8 +13,9 @@ import org.cameralib.engine.CameraDisplayHandler;
 import org.cameralib.engine.CameraManager;
 import org.cameralib.engine.PreviewCallback;
 import org.cameralib.engine.PreviewParameter;
-import org.renderer.FrameRendererView;
-import org.renderer.SurfaceRenderer;
+import org.renderer.IRenderer;
+import org.renderer.SurfaceRendererView;
+import org.renderer.gles.GlesRendererView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, PreviewCallback {
-    private static final String TAG = "MainActivity";
-    int[] rendererIdRes = new int[]{R.id.rendererView1, R.id.rendererView3, R.id.rendererView4};
-    List<FrameRendererView> rendererViews = new ArrayList<>();
+    int[] surfaceRendererIdRes = new int[]{R.id.rendererView1, R.id.rendererView2};
+    int[] glesRendererIdRes = new int[]{R.id.glesRenderView0, R.id.glesRenderView1};
+    List<IRenderer> iRendererList = new ArrayList<>();
     private CameraDisplayHandler displayHandler;
     private ExecutorService threadPool;
 
@@ -37,13 +37,16 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
         TextureView textureView = findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
-
-        for (int idRe : rendererIdRes) {
-            FrameRendererView view = findViewById(idRe);
-            rendererViews.add(view);
+        for (int idRe : surfaceRendererIdRes) {
+            SurfaceRendererView view = findViewById(idRe);
+            iRendererList.add(view);
+        }
+        for (int idRe : glesRendererIdRes) {
+            GlesRendererView view = findViewById(idRe);
+            iRendererList.add(view);
         }
 
-        threadPool = Executors.newFixedThreadPool(rendererViews.size());
+        threadPool = Executors.newFixedThreadPool(iRendererList.size() == 0 ? 1 : iRendererList.size());
     }
 
     @Override
@@ -64,14 +67,14 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                 if (carrier.isSuccess()) {
                     PreviewParameter previewParameter = carrier.getExtra();
                     Camera.Size previewSize = previewParameter.getPreviewSize();
-                    for (FrameRendererView rendererView : rendererViews) {
+                    for (IRenderer rendererView : iRendererList) {
                         try {
-                            rendererView.setup(SurfaceRenderer.FMT_NV21, previewSize.width, previewSize.height, previewParameter.getDegree());
-                            rendererView.updateMatrix(true, FrameRendererView.SCALE_TYPE_CENTER_CROP);
+                            rendererView.setupRenderer(IRenderer.FMT_NV21, previewSize.width, previewSize.height, previewParameter.getDegree(), true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
+
                 } else {
                     carrier.getT().printStackTrace();
                 }
@@ -95,9 +98,14 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onPreviewData(final byte[] buf, PreviewParameter paramter) {
 
-        for (final FrameRendererView rendererView : rendererViews) {
+        for (final IRenderer rendererView : iRendererList) {
             threadPool.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -118,10 +126,6 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             displayHandler.stopDisplay();
             displayHandler = null;
         }
-        for (FrameRendererView rendererView : rendererViews) {
-            rendererView.unSetup();
-        }
-        rendererViews.clear();
 
         threadPool.shutdown();
     }

@@ -15,33 +15,41 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <org.renderer.FrameRendererView
+    <org.renderer.SurfaceRendererView
         android:id="@+id/rendererView1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/rendererView3"
+        app:layout_constraintBottom_toTopOf="@id/rendererView2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textureView" />
 
 
-    <org.renderer.FrameRendererView
-        android:id="@+id/rendererView3"
+    <org.renderer.SurfaceRendererView
+        android:id="@+id/rendererView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/glesRenderView1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/rendererView4"
+        app:layout_constraintRight_toLeftOf="@id/glesRenderView0"
         app:layout_constraintTop_toBottomOf="@id/rendererView1" />
 
-    <org.renderer.FrameRendererView
-        android:id="@+id/rendererView4"
+    <org.renderer.gles.GlesRendererView
+        android:id="@+id/glesRenderView0"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/rendererView3"
+        app:layout_constraintBottom_toTopOf="@id/glesRenderView1"
+        app:layout_constraintLeft_toRightOf="@id/rendererView2"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rendererView1" />
+
+    <org.renderer.gles.GlesRendererView
+        android:id="@+id/glesRenderView1"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/glesRenderView0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"/>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@ import android.view.TextureView;
 
 import static org.renderer.RendererCode.RENDERER_INVALID;
 
-public class FrameRendererView extends TextureView {
+public class SurfaceRendererView extends TextureView implements IRenderer {
     private static final String TAG = "FrameRendererView";
 
     public static final int SCALE_TYPE_FIX_XY = 0;
@@ -26,17 +26,17 @@ public class FrameRendererView extends TextureView {
     private int mFrameWidth;
     private int mFrameHeight;
 
-    public FrameRendererView(Context context) {
+    public SurfaceRendererView(Context context) {
         super(context);
         init();
     }
 
-    public FrameRendererView(Context context, AttributeSet attrs) {
+    public SurfaceRendererView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public FrameRendererView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SurfaceRendererView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -52,7 +52,7 @@ public class FrameRendererView extends TextureView {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             mSurface = new Surface(surface);
-            synchronized (FrameRendererView.this) {
+            synchronized (SurfaceRendererView.this) {
                 if (renderer != null) {
                     renderer.setSurface(mSurface);
                 }
@@ -66,7 +66,7 @@ public class FrameRendererView extends TextureView {
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            synchronized (FrameRendererView.this) {
+            synchronized (SurfaceRendererView.this) {
                 if (renderer != null) {
                     renderer.setSurface(null);
                 }
@@ -85,39 +85,9 @@ public class FrameRendererView extends TextureView {
         super.setSurfaceTextureListener(surfaceTextureListener);
     }
 
-    public synchronized final void setup(int frameFormat, int frameWidth, int frameHeight, int degree)
-            throws Exception {
-        if (renderer != null) {
-            if (renderer.getFormat() == frameFormat
-                    && renderer.getWidth() == frameWidth
-                    && renderer.getHeight() == frameHeight) {
-                Log.w(TAG, "setup repeat, format: " + frameFormat
-                        + ", width: " + frameWidth
-                        + ", height" + frameHeight);
-                return;
-            }
-        }
-        if (renderer != null) {
-            renderer.release();
-        }
-        renderer = new SurfaceRenderer(frameWidth, frameHeight, frameFormat, degree);
-        mFrameFormat = frameFormat;
-        if (degree == 90 || degree == 270) {
-            mFrameWidth = frameHeight;
-            mFrameHeight = frameWidth;
-        } else {
-            mFrameWidth = frameWidth;
-            mFrameHeight = frameHeight;
-        }
-        if (mSurface != null) {
-            renderer.setSurface(mSurface);
-        }
-    }
 
-
-    public void updateMatrix(boolean lrMirror, int scaleType) {
+    public void updateMatrix(int scaleType) {
         this.mScaleType = scaleType;
-        this.lrMirror = lrMirror;
 
         Matrix matrix = getTransform(new Matrix());
         int px = getWidth() / 2;
@@ -199,6 +169,7 @@ public class FrameRendererView extends TextureView {
         }
     }
 
+    @Override
     public synchronized final int refreshFrame(byte[] buffer) {
         if (renderer == null) {
             return RENDERER_INVALID;
@@ -222,5 +193,36 @@ public class FrameRendererView extends TextureView {
         super.onDetachedFromWindow();
         unSetup();
         Log.d(TAG, "onDetachedFromWindow: ");
+    }
+
+    @Override
+    public void setupRenderer(int frameFormat, int frameWidth, int frameHeight, int degree, boolean isMirror) throws Exception {
+        this.lrMirror = isMirror;
+        if (renderer != null) {
+            if (renderer.getFormat() == frameFormat
+                    && renderer.getWidth() == frameWidth
+                    && renderer.getHeight() == frameHeight) {
+                Log.w(TAG, "setup repeat, format: " + frameFormat
+                        + ", width: " + frameWidth
+                        + ", height" + frameHeight);
+                return;
+            }
+        }
+        if (renderer != null) {
+            renderer.release();
+        }
+        renderer = new SurfaceRenderer(frameWidth, frameHeight, frameFormat, degree);
+        mFrameFormat = frameFormat;
+        if (degree == 90 || degree == 270) {
+            mFrameWidth = frameHeight;
+            mFrameHeight = frameWidth;
+        } else {
+            mFrameWidth = frameWidth;
+            mFrameHeight = frameHeight;
+        }
+        if (mSurface != null) {
+            renderer.setSurface(mSurface);
+        }
+        updateMatrix(this.mScaleType);
     }
 }
