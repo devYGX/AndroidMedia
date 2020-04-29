@@ -8,8 +8,8 @@
 
     <TextureView
         android:id="@+id/textureView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
         app:layout_constraintBottom_toTopOf="@id/rendererView1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -46,10 +46,9 @@
     <org.renderer.gles.GlesRendererView
         android:id="@+id/glesRenderView1"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/glesRenderView0"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="0dp"/>
-
+        app:layout_constraintTop_toBottomOf="@id/glesRenderView0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
